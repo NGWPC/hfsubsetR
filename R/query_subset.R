@@ -14,17 +14,17 @@ query_subset <- function(query) {
     type = class(identifier)
   )
   
-  network <- query_source_layer(query$source, "network")
+  net <- query_source_layer(query$source, "network")
   
   if(!is.null(suppressWarnings(origin$vpuid))){
-   network = dplyr::filter(network, vpuid == !!origin$vpuid)
+   net = dplyr::filter(net, vpuid == !!origin$vpuid)
   } 
   
-  network <- network |>
+  network <- net |>
     dplyr::select(dplyr::any_of(c("id", "toid", "divide_id", "poi_id"))) |>
     dplyr::distinct() |>
     dplyr::collect()
-
+  
   topology <- suppressWarnings(nhdplusTools::get_sorted(network, outlets = origin$toid))
   
   topology$toid[nrow(topology)] <- NA
@@ -36,9 +36,23 @@ query_subset <- function(query) {
 
   all_identifiers <-
     all_identifiers[!is.na(all_identifiers)]
+  
+  if('lakes' %in% query$layers){
+    lake_id <- net |> 
+      dplyr::select(id, hl_uri, poi_id) |> 
+      dplyr::filter(!is.na(hl_uri)) |> 
+      dplyr::filter(id %in% !!unique(all_identifiers)) |> 
+      dplyr::distinct() |>
+      dplyr::collect() |> 
+      dplyr::filter(grepl("LAKE", hl_uri)) |> 
+      dplyr::pull(poi_id)
+  
+  } else {
+    lake_id <- NULL
+  }
 
   query$vpuid <- suppressWarnings({ origin$vpuid })
-  query$requested <- all_identifiers
+  query$requested <- c(all_identifiers, lake_id)
 
   query_extract(query)
 }

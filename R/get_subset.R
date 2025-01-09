@@ -19,6 +19,7 @@
 #' @importFrom arrow open_dataset
 #' @importFrom dplyr select filter collect `%>%` everything if_any any_of distinct rename
 #' @importFrom sf st_set_crs write_sf st_sfc st_point st_bbox
+
 get_subset <- function(
   id = NULL, 
   comid = NULL,  
@@ -55,7 +56,7 @@ get_subset <- function(
     .new <- query_set_sink(.new, sink = outfile, overwrite = overwrite)
   }
 
-  query_subset(.new)
+  query_subset(query = .new)
 }
 
 

@@ -6,6 +6,8 @@
 \alias{hfsubsetR-package}
 \title{hfsubsetR: Hydrofabric Subsetter}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 Subset Hydrofabric Data in R.
 }
 \seealso{
