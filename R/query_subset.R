@@ -26,7 +26,7 @@ query_subset <- function(query) {
     dplyr::collect()
 
  topology <- suppressWarnings(
-    nhdplusTools::sort_network(dplyr::select(network, 'id', 'toid'), 
+    nhdplusTools::get_sorted(dplyr::select(network, 'id', 'toid'), 
                             outlets = origin$toid)
   )
   
