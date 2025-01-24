@@ -24,18 +24,24 @@ query_subset <- function(query) {
     dplyr::select(dplyr::any_of(c("id", "toid", "divide_id", "poi_id"))) |>
     dplyr::distinct() |>
     dplyr::collect()
-  
-  topology <- suppressWarnings(nhdplusTools::get_sorted(network, outlets = origin$toid))
+
+ topology <- suppressWarnings(
+    nhdplusTools::sort_network(dplyr::select(network, 'id', 'toid'), 
+                            outlets = origin$toid)
+  )
   
   topology$toid[nrow(topology)] <- NA
+  
+  topology <- as.matrix(topology)
+  topology <- topology[!is.na(topology)]
 
   all_identifiers <-
-    as.matrix(topology) |>
+    filter(network, id %in% topology) |> 
+    as.matrix() |>
     as.vector() |>
     unique()
 
-  all_identifiers <-
-    all_identifiers[!is.na(all_identifiers)]
+  all_identifiers <- all_identifiers[!is.na(all_identifiers)]
   
   if('lakes' %in% query$layers){
     lake_id <- net |> 
@@ -56,6 +62,7 @@ query_subset <- function(query) {
 
   query_extract(query)
 }
+
 
 #' Perform data extraction from a query
 #' @param query A `hfsubset_query` object
