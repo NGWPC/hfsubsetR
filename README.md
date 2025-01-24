@@ -1,21 +1,21 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# hfsubsetR <a href="https://github.com/lynker-spatial/hfsubsetR"><img src="man/figures/logo.png" align="right" width="25%"/></a>
+# hfsubsetR <a href="https://github.com/owp-spatial/hfsubsetR"><img src="man/figures/logo.png" align="right" width="25%"/></a>
 
 <!-- badges: start -->
 
 [![R CMD
-Check](https://github.com/lynker-spatial/hfsubsetR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/lynker-spatial/hfsubsetR/actions/workflows/R-CMD-check.yaml)
+Check](https://github.com/owp-spatial/hfsubsetR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/owp-spatial/hfsubsetR/actions/workflows/R-CMD-check.yaml)
 [![Test
-coverage](https://github.com/lynker-spatial/hfsubsetR/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/lynker-spatial/hfsubsetR/actions/workflows/test-coverage.yaml)
-[![Dependencies](https://img.shields.io/badge/dependencies-8/71-orange?style=flat)](#)
+coverage](https://github.com/owp-spatial/hfsubsetR/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/owp-spatial/hfsubsetR/actions/workflows/test-coverage.yaml)
+[![Dependencies](https://img.shields.io/badge/dependencies-9/69-orange?style=flat)](#)
 [![License: GPL (\>=
 3)](https://img.shields.io/badge/License-GPL%20%28%3E%3D%203%29-blue.svg)](https://choosealicense.com/licenses/gpl-3.0/)
 <!-- badges: end -->
 
 The goal of `hfsubsetR` is to extract hydrofabric subsets from cloud or
-local archives built in `lynker-spatial`.
+local archives built in `spatial.water.noaa.gov`.
 
 ## Installation
 
@@ -24,7 +24,7 @@ You can install the development version of `hfsubsetR` from
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("lynker-spatial/hfsubsetR")
+remotes::install_github("owp-spatial/hfsubsetR")
 ```
 
 ``` r

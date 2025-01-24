@@ -15,7 +15,7 @@ create_metadata <-
   function(df,
            hf_version = "2.2",
            license = "ODbL",
-           source = "lynker-spatial") {
+           source = "spatial.water.noaa.gov") {
     
     warning(strwrap(glue("This is writing {source} supported metadata for hydrofabric version {hf_version}. 
                     Use of the data follows an {license} license."),
@@ -209,7 +209,7 @@ st_read_parquet <- function(dsn, col_select = NULL,
 st_write_parquet <- function(obj, dsn, 
                              hf_version = "2.2",
                              license = "ODbL",
-                             source = "lynker-spatial", 
+                             source = "spatial.water.noaa.gov", 
                              ...) {
   if (!inherits(obj, "sf")) { stop("Must be sf data format") }
   
@@ -306,7 +306,7 @@ write_sf_dataset <- function(obj,
                              partitioning = dplyr::group_vars(obj),
                              hf_version = "2.2",
                              license = "ODbL",
-                             source = "lynker-spatial", 
+                             source = "spatial.water.noaa.gov", 
                              ...) {
   if (!inherits(obj, "sf")) {
     stop("Must be an sf data format. Use arrow::write_dataset instead")

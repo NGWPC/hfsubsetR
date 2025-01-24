@@ -2,7 +2,7 @@ Package: hfsubsetR
 Type: Package
 Title: Hydrofabric Subsetter
 Description: Subset Hydrofabric Data in R.
-Version: 0.3.2
+Version: 0.3.3
 Authors@R: 
     c(person(given = "Mike", 
              family = "Johnson", 
@@ -11,8 +11,8 @@ Authors@R:
              person(given = "Justin", family = "Singh-Mohudpur", 
              role = c("aut")))
 Maintainer: Mike Johnson <mike.johnson@noaa.gov>
-BugReports: https://github.com/lynker-spatial/hfsubsetR
-URL: https://github.com/lynker-spatial/hfsubsetR  
+BugReports: https://github.com/owp-spatial/hfsubsetR
+URL: https://github.com/owp-spatial/hfsubsetR  
 Depends: 
     R (>= 4.2)
 Imports: 
