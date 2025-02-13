@@ -8,6 +8,7 @@
 find_origin <- function(
   network,
   id,
+  src,
   type = c("id", "comid", "hl_uri", "poi_id", "nldi_feature", "xy")
 ) {
 
@@ -15,7 +16,7 @@ find_origin <- function(
   type <- match.arg(type)
   query <- structure(id, class = type)
 
-  origin <- try(find_origin_query(query, network))
+  origin <- try(find_origin_query(query, network, src))
 
   if (inherits(origin, "try-error")) {
     stop(origin, call. = FALSE)
@@ -40,15 +41,16 @@ find_origin <- function(
 #' S3 dispatch on query identifier type
 #' @param id A queryable identifier, see `find_origin`.
 #' @param network A `dplyr`-compatible object.
+#' @param src gpkg layer
 #' @returns `network` after applying a [dplyr::filter] expression.
 #' @keywords internal
-find_origin_query <- function(id, network) {
+find_origin_query <- function(id, network, src) {
   UseMethod("find_origin_query")
 }
 
 #' @method find_origin_query default
 #' @keywords internal
-find_origin_query.default <- function(id, network) {
+find_origin_query.default <- function(id, network, src) {
   stop(paste(
     "identifier of class",
     paste0("`", class(id), "`", collapse = "/"),
@@ -58,14 +60,14 @@ find_origin_query.default <- function(id, network) {
 
 #' @method find_origin_query id
 #' @keywords internal
-find_origin_query.id <- function(id, network) {
+find_origin_query.id <- function(id, network, src) {
   id <- unclass(id)
   dplyr::filter(network, id == !!id)
 }
 
 #' @method find_origin_query comid
 #' @keywords internal
-find_origin_query.comid <- function(comid, network) {
+find_origin_query.comid <- function(comid, network, src) {
   hf_id <- NULL
   comid <- unclass(comid)
   dplyr::filter(network, hf_id == !!comid)
@@ -73,21 +75,21 @@ find_origin_query.comid <- function(comid, network) {
 
 #' @method find_origin_query hl_uri
 #' @keywords internal
-find_origin_query.hl_uri <- function(hl_uri, network) {
+find_origin_query.hl_uri <- function(hl_uri, network, src) {
   hl_uri <- unclass(hl_uri)
   dplyr::filter(network, hl_uri == !!hl_uri)
 }
 
 #' @method find_origin_query poi_id
 #' @keywords internal
-find_origin_query.poi_id <- function(poi_id, network) {
+find_origin_query.poi_id <- function(poi_id, network, src) {
   poi_id <- unclass(poi_id)
   dplyr::filter(network, poi_id == !!poi_id)
 }
 
 #' @method find_origin_query nldi_feature
 #' @keywords internal
-find_origin_query.nldi_feature <- function(nldi_feature, network) {
+find_origin_query.nldi_feature <- function(nldi_feature, network, src) {
   .Class <- "comid"
 
   nldi_feature <- structure(
@@ -100,12 +102,28 @@ find_origin_query.nldi_feature <- function(nldi_feature, network) {
 
 #' @method find_origin_query xy
 #' @keywords internal
-find_origin_query.xy <- function(xy, network) {
-  .Class <- "comid"
+find_origin_query.xy <- function(xy, network, src) {
+  .Class <- "id"
+
+  if(grepl("https", src)){
+    src = paste0("/vsicurl/", src)
+  } else if(grepl("s3", src)){
+    src = paste0("/vsis3/", src)
+  } else {
+    src = src
+  }
+  
+  bb <- sf::st_point(xy) |> 
+    sf::st_sfc(crs = 4326) |> 
+    sf::st_as_sf() |> 
+    sf::st_transform(5070) |> 
+    sf::st_geometry() |> 
+    sf::st_as_text()
 
   xy <- structure(
-    nhdplusTools::discover_nhdplus_id(point = sf::st_sfc(sf::st_point(xy), crs = 4326)),
-    class = "comid"
+    sf::read_sf(src, "divides", wkt_filter = bb) |> 
+      dplyr::pull(id),
+    class = "id"
   )
 
   NextMethod()
