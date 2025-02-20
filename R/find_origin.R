@@ -113,10 +113,15 @@ find_origin_query.xy <- function(xy, network, src) {
     src = src
   }
   
-  bb <- sf::st_point(xy) |> 
+  crs <- as_ogr(src, "divides") |> 
+    head(1) |> 
+    sf::st_as_sf() |> 
+    st_crs()
+  
+  bb <- sf::st_point(unclass(xy)) |> 
     sf::st_sfc(crs = 4326) |> 
     sf::st_as_sf() |> 
-    sf::st_transform(5070) |> 
+    sf::st_transform(crs$wkt) |> 
     sf::st_geometry() |> 
     sf::st_as_text()
 

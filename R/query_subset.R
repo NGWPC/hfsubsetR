@@ -10,7 +10,7 @@ query_subset <- function(query) {
   
   origin <- find_origin(
     network = query_source_layer(query$source, "network"),
-    src = query$source, 
+    src = query$source[1], 
     id = identifier,
     type = class(identifier)
   )
