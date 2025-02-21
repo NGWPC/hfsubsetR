@@ -7,7 +7,7 @@
 query_set_id(
   query,
   identifier,
-  type = c("id", "comid", "hl_uri", "poi_id", "nldi_feature", "xy")
+  type = c("id", "comid", "hl_uri", "poi_id", "nldi_feature", "xy", "pt")
 )
 }
 \arguments{

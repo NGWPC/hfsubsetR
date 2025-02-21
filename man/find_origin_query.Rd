@@ -4,12 +4,14 @@
 \alias{find_origin_query}
 \title{S3 dispatch on query identifier type}
 \usage{
-find_origin_query(id, network)
+find_origin_query(id, network, src)
 }
 \arguments{
 \item{id}{A queryable identifier, see `find_origin`.}
 
 \item{network}{A `dplyr`-compatible object.}
+
+\item{src}{gpkg layer}
 }
 \value{
 `network` after applying a [dplyr::filter] expression.

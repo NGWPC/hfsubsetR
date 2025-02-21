@@ -7,7 +7,8 @@
 find_origin(
   network,
   id,
-  type = c("id", "comid", "hl_uri", "poi_id", "nldi_feature", "xy")
+  src,
+  type = c("id", "comid", "hl_uri", "poi_id", "nldi_feature", "xy", "pt")
 )
 }
 \arguments{
