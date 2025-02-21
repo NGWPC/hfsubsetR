@@ -11,7 +11,7 @@ query <- function() {
 #' @param type Identifier type
 #' @returns `query` with the identifier included
 #' @export
-query_set_id <- function(query, identifier, type = c("id", "comid", "hl_uri", "poi_id", "nldi_feature", "xy")) {
+query_set_id <- function(query, identifier, type = c("id", "comid", "hl_uri", "poi_id", "nldi_feature", "xy", "pt")) {
   .assert_query(query)
 
   # TODO: Check if id is already added?

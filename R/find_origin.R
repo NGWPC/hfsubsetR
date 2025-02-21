@@ -9,7 +9,7 @@ find_origin <- function(
   network,
   id,
   src,
-  type = c("id", "comid", "hl_uri", "poi_id", "nldi_feature", "xy")
+  type = c("id", "comid", "hl_uri", "poi_id", "nldi_feature", "xy", "pt")
 ) {
 
   hydroseq <- NULL
@@ -100,11 +100,12 @@ find_origin_query.nldi_feature <- function(nldi_feature, network, src) {
   NextMethod()
 }
 
+
 #' @method find_origin_query xy
 #' @keywords internal
 find_origin_query.xy <- function(xy, network, src) {
   .Class <- "id"
-
+  
   if(grepl("https", src)){
     src = paste0("/vsicurl/", src)
   } else if(grepl("s3", src)){
@@ -122,6 +123,37 @@ find_origin_query.xy <- function(xy, network, src) {
     sf::st_sfc(crs = 4326) |> 
     sf::st_as_sf() |> 
     sf::st_transform(crs$wkt) |> 
+    sf::st_geometry() |> 
+    sf::st_as_text()
+  
+  xy <- structure(
+    sf::read_sf(src, "divides", wkt_filter = bb) |> 
+      dplyr::pull(id),
+    class = "id"
+  )
+  
+  NextMethod()
+}
+
+#' @method find_origin_query xy
+#' @keywords internal
+find_origin_query.pt <- function(xy, network, src) {
+  .Class <- "id"
+
+  if(grepl("https", src)){
+    src = paste0("/vsicurl/", src)
+  } else if(grepl("s3", src)){
+    src = paste0("/vsis3/", src)
+  } else {
+    src = src
+  }
+  
+  crs <- as_ogr(src, "divides") |> 
+    head(1) |> 
+    sf::st_as_sf() |> 
+    st_crs()
+  
+  bb <- sf::st_transform(pt, crs$wkt) |> 
     sf::st_geometry() |> 
     sf::st_as_text()
 

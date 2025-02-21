@@ -56,7 +56,6 @@ query_subset <- function(query) {
       dplyr::collect() |> 
       dplyr::filter(grepl("LAKE", hl_uri)) |> 
       dplyr::pull(poi_id)
-  
   } else {
     lake_id <- NULL
   }
