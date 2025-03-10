@@ -11,6 +11,7 @@ get_subset(
   poi_id = NULL,
   nldi_feature = NULL,
   xy = NULL,
+  pt = NULL,
   lyrs = c("divides", "flowpaths", "network", "nexus"),
   gpkg = NULL,
   source = "s3://lynker-spatial/hydrofabric",
@@ -32,7 +33,9 @@ get_subset(
 
 \item{nldi_feature}{list with names 'featureSource' and 'featureID' where 'featureSource' is derived from the "source" column of the response of dataRetrieval::get_nldi_sources() and the 'featureID' is a known identifier from the specified 'featureSource'. datatype: a url e.g., 'https://labs.waterdata.usgs.gov/api/nldi/linked-data/census2020-nhdpv2'}
 
-\item{xy}{Location given as vector of XY in EPSG:4326 (longitude, latitude, crs)}
+\item{xy}{Location given as vector of XY in EPSG:4326 (longitude, latitude)}
+
+\item{pt}{sf POINT (or polygon (use carefully!!))) object in any CRS}
 
 \item{lyrs}{layers to extract}
 

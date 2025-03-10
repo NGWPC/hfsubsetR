@@ -4,7 +4,8 @@
 #' @param hl_uri hydrolocation URI. datatype: string / vector of string / a url e.g., HUC12-010100100101 or c(HUC12-010100100101 , HUC12-010100110104) 
 #' @param poi_id POI identifier. datatype: int / vector of int e.g., 266387 or c(266387, 266745)
 #' @param nldi_feature list with names 'featureSource' and 'featureID' where 'featureSource' is derived from the "source" column of the response of dataRetrieval::get_nldi_sources() and the 'featureID' is a known identifier from the specified 'featureSource'. datatype: a url e.g., 'https://labs.waterdata.usgs.gov/api/nldi/linked-data/census2020-nhdpv2'
-#' @param xy Location given as vector of XY in EPSG:4326 (longitude, latitude, crs)
+#' @param xy Location given as vector of XY in EPSG:4326 (longitude, latitude)
+#' @param pt sf POINT (or polygon (use carefully!!))) object in any CRS
 #' @param type hydrofabric type
 #' @param hf_version hydrofabric version
 #' @param source hydrofabric source (local root directory or s3 link)
@@ -27,6 +28,7 @@ get_subset <- function(
   poi_id = NULL, 
   nldi_feature = NULL, 
   xy = NULL, 
+  pt = NULL,
   lyrs = c("divides", "flowpaths", "network", "nexus"),
   gpkg = NULL,
   source = "s3://lynker-spatial/hydrofabric",
@@ -37,7 +39,7 @@ get_subset <- function(
   overwrite = FALSE
 ) {
 
-  kv <- .dispatch_identifiers(id, comid, hl_uri, poi_id, nldi_feature, xy)
+  kv <- .dispatch_identifiers(id, comid, hl_uri, poi_id, nldi_feature, xy, pt)
   
   if (!is.null(gpkg)) {
     src <- query_source_sf(gpkg)
@@ -61,14 +63,15 @@ get_subset <- function(
 
 
 #' @keywords internal
-.dispatch_identifiers <- function(id, comid, hl_uri, poi_id, nldi_feature, xy) {
+.dispatch_identifiers <- function(id, comid, hl_uri, poi_id, nldi_feature, xy, pt) {
   mask <- !c(
     is.null(id),
     is.null(comid),
     is.null(hl_uri),
     is.null(poi_id),
     is.null(nldi_feature),
-    is.null(xy)
+    is.null(xy),
+    is.null(pt)
   )
 
   if (sum(mask) == 0) {
@@ -83,7 +86,8 @@ get_subset <- function(
     hl_uri = hl_uri,
     poi_id = poi_id,
     nldi_feature = nldi_feature,
-    xy = xy
+    xy = xy,
+    pt = pt
   )
 
   list(value = index[[which(mask)]], type = names(index)[[which(mask)]])

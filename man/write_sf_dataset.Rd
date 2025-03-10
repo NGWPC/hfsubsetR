@@ -11,7 +11,7 @@ write_sf_dataset(
   partitioning = dplyr::group_vars(obj),
   hf_version = "2.2",
   license = "ODbL",
-  source = "lynker-spatial",
+  source = "spatial.water.noaa.gov",
   ...
 )
 }

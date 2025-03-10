@@ -13,8 +13,8 @@ Subset Hydrofabric Data in R.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/lynker-spatial/hfsubsetR}
-  \item Report bugs at \url{https://github.com/lynker-spatial/hfsubsetR}
+  \item \url{https://github.com/owp-spatial/hfsubsetR}
+  \item Report bugs at \url{https://github.com/owp-spatial/hfsubsetR}
 }
 
 }

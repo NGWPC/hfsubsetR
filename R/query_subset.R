@@ -10,6 +10,7 @@ query_subset <- function(query) {
   
   origin <- find_origin(
     network = query_source_layer(query$source, "network"),
+    src = query$source[1], 
     id = identifier,
     type = class(identifier)
   )
@@ -29,20 +30,23 @@ query_subset <- function(query) {
     nhdplusTools::get_sorted(dplyr::select(network, 'id', 'toid'), 
                             outlets = origin$toid)
   )
-  
-  topology$toid[nrow(topology)] <- NA
+
+  topology <- topology[-nrow(topology), ]
+  topology <- topology[!duplicated(topology), ]
+  term     <- topology$toid[nrow(topology)]
   
   topology <- as.matrix(topology)
   topology <- topology[!is.na(topology)]
-
+  
   all_identifiers <-
     filter(network, id %in% topology) |> 
+    filter(id != term) |>
     as.matrix() |>
     as.vector() |>
     unique()
-
-  all_identifiers <- all_identifiers[!is.na(all_identifiers)]
   
+  all_identifiers <- all_identifiers[!is.na(all_identifiers)]
+
   if('lakes' %in% query$layers){
     lake_id <- net |> 
       dplyr::select(id, hl_uri, poi_id) |> 
@@ -52,7 +56,6 @@ query_subset <- function(query) {
       dplyr::collect() |> 
       dplyr::filter(grepl("LAKE", hl_uri)) |> 
       dplyr::pull(poi_id)
-  
   } else {
     lake_id <- NULL
   }
@@ -62,7 +65,6 @@ query_subset <- function(query) {
 
   query_extract(query)
 }
-
 
 #' Perform data extraction from a query
 #' @param query A `hfsubset_query` object
