@@ -14,7 +14,6 @@
 #' @importFrom dplyr filter mutate pull %>%
 #' @importFrom igraph as.igraph V E shortest_paths
 #' 
-library(dplyr)
 
 get_shortest_path <- function(
     start_id,

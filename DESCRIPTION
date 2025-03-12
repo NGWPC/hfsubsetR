@@ -25,7 +25,9 @@ Imports:
     jsonlite,
     nhdplusTools,
     sf,
-    methods
+    methods,
+    tidygraph,
+    igraph
 Suggests:
     testthat
 License: GPL (>= 3)
@@ -39,6 +41,7 @@ Collate:
     'OGRSQLDriver.R'
     'OGRSQLResult.R'
     'find_origin.R'
+    'get_shortest_path.R'
     'get_subset.R'
     'hfsubsetR-package.R'
     'query.R'
