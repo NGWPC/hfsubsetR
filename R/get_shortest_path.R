@@ -18,7 +18,7 @@
 get_shortest_path <- function(
     start_id,
     end_id,
-    gpkg,
+    gpkg = NULL,
     filename = NULL,
     lyrs = c("divides", "flowpaths", "network", "nexus", "flowpath-attributes")
   ) {
@@ -66,19 +66,13 @@ get_shortest_path <- function(
     
     path_nodes <- igraph::V(topo_graph)[shortest_path$vpath[[1]]]$name
     
-    gpkg_dir <- dirname(gpkg)
-      if (is.null(filename)) {
-        output_filename <- paste0(start_id, "-", end_id, ".gpkg")
-      } else {
-        output_filename <- paste0(filename, ".gpkg")
-      }
-    output_gpkg_path <- file.path(gpkg_dir, output_filename)
-
+    result <- list()
+    
     if ("flowpaths" %in% lyrs || length(lyrs) == 0) {
       flowpaths <- local_subset$flowpaths
       flowpaths$id <- as.character(flowpaths$id)
       shortest_flowpaths <- flowpaths[flowpaths$id %in% path_nodes, ]
-      sf::st_write(shortest_flowpaths, output_gpkg_path, layer = "flowpaths", append=FALSE)
+      result$flowpaths <- shortest_flowpaths
     }
     
     if ("divides" %in% lyrs || length(lyrs) == 0) {
@@ -86,7 +80,7 @@ get_shortest_path <- function(
         divides <- local_subset$divides
         divides$id <- as.character(divides$id)
         shortest_divides <- divides[divides$id %in% shortest_flowpaths$id, ]
-        sf::st_write(shortest_divides, output_gpkg_path, layer = "divides", append=FALSE)
+        result$divides <- shortest_divides
       }
     }
     
@@ -95,7 +89,7 @@ get_shortest_path <- function(
         nexus <- local_subset$nexus
         nexus$id <- as.character(nexus$id)
         shortest_nexus <- nexus[nexus$id %in% shortest_flowpaths$toid, ]
-        sf::st_write(shortest_nexus, output_gpkg_path, layer = "nexus", append=FALSE)
+        result$nexus <- shortest_nexus
       }
     }
     
@@ -105,7 +99,7 @@ get_shortest_path <- function(
       network$toid <- as.character(network$toid)
       shortest_network <- network[network$id %in% path_nodes | 
                                     network$toid %in% path_nodes, ]
-      sf::st_write(shortest_network, output_gpkg_path, layer = "network", append=FALSE)
+      result$network <- shortest_network
     }
     
     if ("flowpath-attributes" %in% lyrs || length(lyrs) == 0) {
@@ -113,7 +107,7 @@ get_shortest_path <- function(
         flowpath_attributes <- local_subset$`flowpath-attributes`
         flowpath_attributes$id <- as.character(flowpath_attributes$id)
         shortest_flowpath_attributes <- flowpath_attributes[flowpath_attributes$id %in% shortest_flowpaths$id, ]
-        sf::st_write(shortest_flowpath_attributes, output_gpkg_path, layer = "flowpath-attributes", append=FALSE)
+        result$`flowpath-attributes` <- shortest_flowpath_attributes
       }
     }
     
@@ -122,7 +116,7 @@ get_shortest_path <- function(
         flowpath_attributes_ml <- local_subset$`flowpath-attributes-ml`
         flowpath_attributes_ml$id <- as.character(flowpath_attributes_ml$id)
         shortest_flowpath_attributes_ml <- flowpath_attributes_ml[flowpath_attributes_ml$id %in% shortest_flowpaths$id, ]
-        sf::st_write(shortest_flowpath_attributes_ml, output_gpkg_path, layer = "flowpath-attributes", append=FALSE)
+        result$`flowpath-attributes-ml` <- shortest_flowpath_attributes_ml
       }
     }
     
@@ -131,15 +125,15 @@ get_shortest_path <- function(
         hydrolocations <- local_subset$hydrolocations
         hydrolocations$id <- as.character(hydrolocations$id)
         shortest_hydrolocations <- hydrolocations[hydrolocations$id %in% shortest_flowpaths$id, ]
-        sf::st_write(shortest_hydrolocations, output_gpkg_path, layer = "hydrolocations", append=FALSE)
+        result$hydrolocations <- shortest_hydrolocations
       }
     }
-
+    
     if ("lakes" %in% lyrs || length(lyrs) == 0) {
       if (exists("network", inherits = FALSE)) {
         lakes <- local_subset$lakes
         shortest_lakes <- lakes[lakes$hf_id %in% network$hf_id, ]
-        sf::st_write(shortest_lakes, output_gpkg_path, layer = "lakes", append=FALSE)
+        result$lakes <- shortest_lakes
       }
     }
     
@@ -148,7 +142,7 @@ get_shortest_path <- function(
         pois <- local_subset$pois
         pois$id <- as.character(pois$id)
         shortest_pois <- pois[pois$id %in% shortest_flowpaths$id, ]
-        sf::st_write(shortest_pois, output_gpkg_path, layer = "pois", append=FALSE)
+        result$pois <- shortest_pois
       }
     }
     
@@ -157,7 +151,19 @@ get_shortest_path <- function(
         divide_attributes <- local_subset$`divide-attributes`
         divide_attributes$divide_id <- as.character(divide_attributes$divide_id)
         shortest_divide_attributes <- divide_attributes[divide_attributes$divide_id %in% shortest_divides$divide_id, ]
-        sf::st_write(shortest_divide_attributes, output_gpkg_path, layer = "divide-attributes", append=FALSE)
+        result$`divide-attributes` <- shortest_divide_attributes
       }
     }
+    
+    if (!is.null(filename)) {
+      gpkg_dir <- dirname(gpkg)
+      output_filename <- paste0(filename, ".gpkg")
+      output_gpkg_path <- file.path(gpkg_dir, output_filename)
+      
+      for (layer_name in names(result)) {
+        sf::st_write(result[[layer_name]], output_gpkg_path, layer = layer_name, append = FALSE)
+      }
+    }
+    
+    return(result)
 }

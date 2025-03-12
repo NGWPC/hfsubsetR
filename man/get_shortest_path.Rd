@@ -7,7 +7,7 @@
 get_shortest_path(
   start_id,
   end_id,
-  gpkg,
+  gpkg = NULL,
   filename = NULL,
   lyrs = c("divides", "flowpaths", "network", "nexus", "flowpath-attributes")
 )
